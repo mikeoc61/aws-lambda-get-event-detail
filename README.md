@@ -3,14 +3,12 @@ Python3 program and lambda event handler that returns various details about the
 function execution environment formatted in CSS/HTML
 
 ## Function returns the following:
-
     - Location data based on the IP address of the execution environment
     - Platform Execution information
     - Data passed from the browser client via API Gateway
     - A few attributes of the function execution context
 
 ## API Gateway Integration Response
-
 Since program returns CSS/HTML code vs. the typical json, important that
 Integration Response in API Gateway is configured correctly. Specifically,
 

@@ -33,8 +33,7 @@ from urllib.request import urlopen
     Copyright (c) 2018 Michael E. O'Connor
     '''
 
-__version__ = "1.2"
-
+__version__ = "1.0"
 
 platform_data = {
     'system': platform.system(),
@@ -52,7 +51,7 @@ def get_IP_geo():
     geo_URL = "http://ipinfo.io/json"
 
     # Initialize data structure we will use to build and return to caller so
-    # that function will still return data in and expected format if call fails
+    # that function will still return data in an expected format if call fails
 
     geo_json = {
     "ip": "123.123.123.123",
@@ -117,15 +116,13 @@ def lambda_handler(event, context):
 
     html_body = "<body>"
     html_body += "<h1>AWS Lambda Function Event Details</h1>"
-    #html_body += "<div class='box'>Float</div>"
-    #html_body += ".box {float: left; width: 150px; height: 150px; margin-right: 30px;}"
 
     # Location detail based on IP address of calling function
 
-    my_geo = get_IP_geo()
     html_body += "<h2>Location Detail based on IP lookup</h2>"
     html_body += "<div class='detail'>"
     html_body += "<ul>"
+    my_geo = get_IP_geo()
     for k, v in my_geo.items():
         html_body += "<li>{} = {}</li>".format(k, v)
     html_body += "</ul>"
@@ -158,7 +155,6 @@ def lambda_handler(event, context):
     html_body += "</ul>"
     html_body += "</div>"
 
-
     # Display some context attributes for this lambda function
     # See: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
 
@@ -173,10 +169,9 @@ def lambda_handler(event, context):
     html_body += "</ul>"
     html_body += "</div>"
 
+    # Finished with HTML formatting
+
     html_body += "</body>"
-
-    # Closing HTML formatting
-
     html_tail = "</html>"
 
     # Assemble HTML response and return via API Gateway
