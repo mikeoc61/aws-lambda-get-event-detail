@@ -15,7 +15,7 @@ from urllib.request import urlopen
 
     Since program returns CSS/HTML code vs. the typical json, important that
     Integration Response in API Gateway is configured correctly. Please see
-    README.md for details steps on how to do this.
+    README.md for detailed steps on how to do this.
  
     Public domain by Michael OConnor <gmikeoc@gmail.com>
     Also available under the terms of MIT license
