@@ -4,7 +4,9 @@ import json
 import platform
 from urllib.request import urlopen
 
-''' Lambda function that returns the following in CSS/HTML:
+''' Lambda function that dynamically generates and returns CSS/HTML/Javascript.
+
+    Information returned:
 
     - Location data based on the IP address of the execution environment
     - Platform Execution information
@@ -33,8 +35,6 @@ from urllib.request import urlopen
     Copyright (c) 2018 Michael E. O'Connor
     '''
 
-__version__ = "1.0"
-
 platform_data = {
     'system': platform.system(),
     'platform': platform.platform(),
@@ -51,7 +51,7 @@ def get_IP_geo():
     geo_URL = "http://ipinfo.io/json"
 
     # Initialize data structure we will use to build and return to caller so
-    # that function will still return data in an expected format if call fails
+    # that function will still return data in and expected format if call fails
 
     geo_json = {
     "ip": "123.123.123.123",
@@ -95,11 +95,20 @@ def lambda_handler(event, context):
     html_head += "<title>Display Lambda Function Detail</title>"
     html_head += "<style>"
     html_head += "body {background-color: #93B874;}"
+
     html_head += ".detail {position: relative; left: 30px;}"
     html_head += ".detail {border: 3px solid green;}"
     html_head += ".detail {border-radius: 5px; padding: 2px;}"
     html_head += ".detail {width: 620px;}"
     html_head += ".detail {margin-left: 20px;}"
+
+    html_head += ".button {color: black; background-color: #93B874;}"
+    html_head += ".button {text-align: center; padding: 5px 20px;}"
+    html_head += ".button {border-radius: 4px; cursor: pointer;}"
+    html_head += ".button {margin: 4px 2px; font-size: 18px;}"
+    html_head += ".button {border: 2px solid green;}"
+    html_head += ".button {display: inline-block; text-decoration: none;}"
+
     html_head += "ul {list-style-position: inside; word-break: break-all;}"
     html_head += "ul {padding-left: 20px; margin-left: 20px; text-indent: -20px}"
     html_head += "ul {font-family: 'Times New Roman', Times, serif;}"
@@ -117,12 +126,17 @@ def lambda_handler(event, context):
     html_body = "<body>"
     html_body += "<h1>AWS Lambda Function Event Details</h1>"
 
+    html_body += "<div align = center>"
+    html_body += "<button class='button' onclick='location.reload();'>"
+    html_body += "Refresh Page"
+    html_body += "</button></div>"
+
     # Location detail based on IP address of calling function
 
+    my_geo = get_IP_geo()
     html_body += "<h2>Location Detail based on IP lookup</h2>"
     html_body += "<div class='detail'>"
     html_body += "<ul>"
-    my_geo = get_IP_geo()
     for k, v in my_geo.items():
         html_body += "<li>{} = {}</li>".format(k, v)
     html_body += "</ul>"
@@ -152,6 +166,8 @@ def lambda_handler(event, context):
             #html_body += "<div class='detail'>"
             for attr, val in v.items():
                 html_body += "<li>{} = {}</li>".format(attr, v[attr])
+        elif isinstance(event[key], str):
+            html_body += "<li>{} = {}</li>".format(key,event[key])
     html_body += "</ul>"
     html_body += "</div>"
 
