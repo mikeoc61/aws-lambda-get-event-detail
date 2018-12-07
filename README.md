@@ -8,9 +8,46 @@ function execution environment formatted in CSS/HTML
     - Data passed from the browser client via API Gateway
     - A few attributes of the function execution context
 
-## API Gateway Integration Response
+## API Gateway Method Execution
 Since program returns CSS/HTML code vs. the typical json, we need to
-reconfigure the Integration Response. Here are the console instructions:
+reconfigure the API Gateway Integration Response associated with the Method Execution. We may also want to replace the Integration Request default Proxy behavior with
+a custom mapping. It's also important to Deploy the API following any changes to
+Method Execution. Here are the relevant console instructions:
+
+### For Integration Request
+1. In API Gateway, select the API you specified when creating the lamdba function
+2. Select the GET Method for your new lambda function and select Integration Request
+3. If you wish to add a custom integration template, uncheck the box next to
+   Use Lambda Proxy integration and add the new template under Mapping Templates
+4. Add Content-Type 'application/json' (don't include quotes)
+5. Add mapping template. Here is a sample template that I've found useful:
+
+```
+{
+"body" : $input.json('$'),
+"headers": {
+  #foreach($header in $input.params().header.keySet())
+  "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
+
+  #end
+},
+"method": "$context.httpMethod",
+"params": {
+  #foreach($param in $input.params().path.keySet())
+  "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
+
+  #end
+},
+"query": {
+  #foreach($queryParam in $input.params().querystring.keySet())
+  "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
+
+  #end
+}  
+}
+```
+
+### For Integration Response
 
   1. In API Gateway, select the API you specified when creating the lamdba function
   2. Select the GET Method for your new lambda function and select Method Response
@@ -25,5 +62,7 @@ reconfigure the Integration Response. Here are the console instructions:
   9. Select "Add mapping template" and enter "text/html" (without quotes).
   10. Select the "text/html" Content Type and set the template value to:
 
+```
     #set($inputRoot = $input.path('$'))
     $inputRoot
+```
