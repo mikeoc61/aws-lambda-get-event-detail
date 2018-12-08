@@ -10,14 +10,15 @@ function execution environment formatted in CSS/HTML
 
 ## API Gateway Method Execution
 Since program returns CSS/HTML code vs. the typical json, we need to
-reconfigure the API Gateway Integration Response associated with the Method Execution. We may also want to replace the Integration Request default Proxy behavior with
-a custom mapping. It's also important to Deploy the API following any changes to
+reconfigure the API Gateway Integration Response associated with the Method Execution. To define a custom response mapping we'll also have to disable Integration Request default Proxy behavior and optionally create a new Request Mapping template. Both
+the provided mapping template and the one listed below work with this code.
+Also remember to Deploy the API following any changes to
 Method Execution. Here are the relevant console instructions:
 
 ### For Integration Request
 1. In API Gateway, select the API you specified when creating the lamdba function
 2. Select the GET Method for your new lambda function and select Integration Request
-3. If you wish to add a custom integration template, uncheck the box next to
+3. To add a custom integration template, uncheck the box next to
    Use Lambda Proxy integration and add the new template under Mapping Templates
 4. Add Content-Type 'application/json' (don't include quotes)
 5. Add mapping template. Here is a sample template that I've found useful:
@@ -30,20 +31,20 @@ Method Execution. Here are the relevant console instructions:
   "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
 
   #end
-},
+  },
 "method": "$context.httpMethod",
 "params": {
   #foreach($param in $input.params().path.keySet())
   "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
 
   #end
-},
+  },
 "query": {
   #foreach($queryParam in $input.params().querystring.keySet())
   "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
 
   #end
-}  
+  }  
 }
 ```
 
@@ -63,6 +64,6 @@ Method Execution. Here are the relevant console instructions:
   10. Select the "text/html" Content Type and set the template value to:
 
 ```
-    #set($inputRoot = $input.path('$'))
-    $inputRoot
+  #set($inputRoot = $input.path('$'))
+  $inputRoot
 ```

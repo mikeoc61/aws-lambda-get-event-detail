@@ -1,25 +1,18 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import json
 import platform
 from urllib.request import urlopen
 
-''' Lambda function that dynamically generates and returns CSS/HTML/Javascript.
+''' Lambda function written in Python 3 that returns returns the following
+    in raw HTML:
 
-    Information returned:
+    - Location data based on the IP address of the function execution environment
 
-    - Location data based on the IP address of the execution environment
-    - Platform Execution information
-    - Data passed from the browser client via API Gateway
-    - A few attributes of the function execution context
+    - Data passed from the browser client
 
-    Since program returns CSS/HTML code vs. the typical json, important that
-    Integration Response in API Gateway is configured correctly. Please see
-    README.md for detailed steps on how to do this.
- 
-    Public domain by Michael OConnor <gmikeoc@gmail.com>
-    Also available under the terms of MIT license
-    Copyright (c) 2018 Michael E. O'Connor
+    - Various attributes of the function execution context
+
+    For info on provisioning API gateway, please see README.md @
+    https://github.com/mikeoc61/aws-lambda-get-event-detail
     '''
 
 platform_data = {
@@ -66,12 +59,12 @@ def get_IP_geo():
 
     return geo_json
 
-
-def lambda_handler(event, context):
-    '''Main event handler function invoked by API gateway. In this case,
-       function will return onl raw HTML via the gataway to the client
+def build_response(event, context):
+    '''Using event and context data structures provided by the event
+       handler, build a list formatted as CSS/HTML/Javascript consisting
+       of information about the execution environment and return list
+       to the lambda event handler.
     '''
-    print("In lambda handler")
 
     # Format the Head section of the DOM including any CSS formatting to
     # apply to the remainder of the document. Break into multiple lines for
@@ -140,9 +133,10 @@ def lambda_handler(event, context):
     html_body += "</div>"
 
     # Event detail based on format defined by API gateway Integration Request
-    # mapping template for method invoked
+    # mapping template for method invoked. Loop through data structures in
+    # the event{} object and convert to HTML list items.
 
-    html_body += "<h2>Calling Event Detail</h2>"
+    html_body += "<h2>Client Request Detail</h2>"
 
     html_body += "<div class='detail'>"
     html_body += "<ul>"
@@ -150,24 +144,27 @@ def lambda_handler(event, context):
         html_body += "<h3>{}</h3>".format(key)
         print("{} = {}".format(key, event[key]))
         if isinstance(event[key], dict):
-            #html_body += "<div class='detail'>"
             for attr, val in v.items():
                 html_body += "<li>{} = {}</li>".format(attr, v[attr])
         elif isinstance(event[key], str):
-            html_body += "<li>{} = {}</li>".format(key,event[key])
+            html_body += "<li>{} = {}</li>".format(key, event[key])
     html_body += "</ul>"
     html_body += "</div>"
 
-    # Display some context attributes for this lambda function
-    # See: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
+    # Display some context attributes for this lambda function. See:
+    # https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
 
-    html_body += "<h2>Context Stats</h2>"
+    html_body += "<h2>Event Context Detail</h2>"
     html_body += "<div class='detail'>"
     html_body += "<ul>"
     html_body += "<li>Function name: {}</li>".format(context.function_name)
-    html_body += "<li>Time remaining(MS): {}</li>".format(
+    html_body += "<li>Function version: {}</li>".format(context.function_version)
+    html_body += "<li>Function ARN: {}</li>".format(context.invoked_function_arn)
+    html_body += "<li>Request ID: {}</li>".format(context.aws_request_id)
+    html_body += "<br>"
+    html_body += "<li>Time budget remaining (MS): {}</li>".format(
                   context.get_remaining_time_in_millis())
-    html_body += "<li>Memory limits(MB): {}</li>".format(
+    html_body += "<li>Memory limits (MB): {}</li>".format(
                   context.memory_limit_in_mb)
     html_body += "</ul>"
     html_body += "</div>"
@@ -182,3 +179,12 @@ def lambda_handler(event, context):
     resp = html_head + html_body + html_tail
 
     return resp
+
+def lambda_handler(event, context):
+    '''Main event handler function invoked by API gateway. In this case,
+       function simply calls the response_builder function and
+       will returns CSS/HTML via the gataway to the client
+    '''
+    print("In lambda handler")
+
+    return build_response(event, context)
