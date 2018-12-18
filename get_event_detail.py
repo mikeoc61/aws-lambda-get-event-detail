@@ -1,4 +1,4 @@
-import json
+from json import loads
 import platform
 from urllib.request import urlopen
 
@@ -48,14 +48,16 @@ def get_IP_geo():
 
     try:
         webUrl = urlopen (geo_URL)
+    except:
+        print("Error opening: {}, using default location".format(geo_URL))
+    else:
         if (webUrl.getcode() == 200):
             geo_data = webUrl.read()
-            geo_json = json.loads(geo_data.decode('utf-8'))
+            geo_json = loads(geo_data.decode('utf-8'))
             geo_json['loc'] = geo_json['loc'].split(',')
         else:
-            print ("Geo service unavailable, using default location")
-    except:
-        print ("Error opening: {}, using default location".format(geo_URL))
+            print("webUrl.getcode() returned: {}".format(webUrl.getcode()))
+            print("Using default location data")
 
     return geo_json
 
