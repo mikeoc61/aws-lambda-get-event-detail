@@ -8,7 +8,7 @@ function execution environment formatted in CSS/HTML
     - Data passed from the browser client via API Gateway
     - A few attributes of the function execution context
 
-You can test the function by visiting: [https://api.mikeoc.me/service/beta/showEventDetail] (https://api.mikeoc.me/service/beta/showEventDetail?key1=value2&key2=value2)
+You can test the function by visiting: https://api.mikeoc.me/service/beta/showEventDetail?key1=value2&key2=value2
 
 ## API Gateway Method Execution
 Since program returns CSS/HTML code vs. the typical json, we need to
