@@ -2,12 +2,12 @@ from json import loads
 import platform
 from urllib.request import urlopen
 
-''' Lambda function written in Python 3 that returns returns the following
-    in raw HTML:
+''' Lambda function written in Python 3 that returns the following
+    in raw HTML/CSS:
 
     - Location data based on the IP address of the function execution environment
 
-    - Data passed from the browser client
+    - Data passed from the browser client via API Gateway
 
     - Various attributes of the function execution context
 
@@ -73,31 +73,35 @@ def build_response(event, context):
     # improved readability
 
     html_head = "<!DOCTYPE html>"
-    html_head += "<head>"
+    html_head += "<head lang='en'>"
     html_head += "<title>Display Lambda Function Detail</title>"
     html_head += "<style>"
-    html_head += "body {background-color: #93B874;}"
+    html_head += "body {background-color:#e5e5e5;margin:50px;padding: 10px;width:730px;}"
+    html_head += "html {text-align:left;margin:0 auto;background:darkgrey;width:850px}"
 
     html_head += ".detail {position: relative; left: 30px;}"
-    html_head += ".detail {border: 3px solid green;}"
+    html_head += ".detail {border: 3px solid darkgrey;}"
     html_head += ".detail {border-radius: 5px; padding: 2px;}"
-    html_head += ".detail {width: 620px;}"
-    html_head += ".detail {margin-left: 20px;}"
+    html_head += ".detail {text-align: left; width: 620px;}"
+    html_head += ".detail {margin-left: 10px;}"
 
-    html_head += ".button {color: black; background-color: #93B874;}"
+    html_head += ".button {color: white; background: darkgrey;}"
     html_head += ".button {text-align: center; padding: 5px 20px;}"
     html_head += ".button {border-radius: 4px; cursor: pointer;}"
     html_head += ".button {margin: 4px 2px; font-size: 18px;}"
-    html_head += ".button {border: 2px solid green;}"
+    html_head += ".button {border: 2px solid black;}"
     html_head += ".button {display: inline-block; text-decoration: none;}"
+
+    html_head += ".container {text-align:center;outline:solid 2px;}"
+    html_head += ".container {margin: 20px; padding-bottom: 10px;}"
 
     html_head += "ul {list-style-position: inside; word-break: break-all;}"
     html_head += "ul {padding-left: 20px; margin-left: 20px; text-indent: -20px}"
     html_head += "ul {font-family: 'Times New Roman', Times, serif;}"
     html_head += "ul {font-size: 14px;}"
-    html_head += "h1 {text-align: center;}"
-    html_head += "h2 {margin-left: 10px;}"
-    html_head += "h3 {margin-left: -10px;}"
+    html_head += "h1 {text-align: center; margin-top: 20px}"
+    html_head += "h2 {text-align: left; margin-left: 10px;padding-top: 20px}"
+    html_head += "h3 {test-align: left; margin-left: -10px;}"
     html_head += "</style>"
     html_head += "</head>"
 
@@ -113,6 +117,7 @@ def build_response(event, context):
     html_body += "Refresh Page"
     html_body += "</button></div>"
 
+    html_body += "<section class='container'>"
     # Location detail based on IP address of calling function
 
     my_geo = get_IP_geo()
@@ -164,6 +169,8 @@ def build_response(event, context):
     html_body += "<li>Function ARN: {}</li>".format(context.invoked_function_arn)
     html_body += "<li>Request ID: {}</li>".format(context.aws_request_id)
     html_body += "<br>"
+    html_body += "<li>Time used (MS): {}</li>".format(
+                  3000 - context.get_remaining_time_in_millis())
     html_body += "<li>Time budget remaining (MS): {}</li>".format(
                   context.get_remaining_time_in_millis())
     html_body += "<li>Memory limits (MB): {}</li>".format(
@@ -173,6 +180,7 @@ def build_response(event, context):
 
     # Finished with HTML formatting
 
+    html_body += "</section>"
     html_body += "</body>"
     html_tail = "</html>"
 
