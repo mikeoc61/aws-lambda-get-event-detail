@@ -8,7 +8,7 @@ function execution environment formatted in CSS/HTML
     - Data passed from the browser client via API Gateway
     - A few attributes of the function execution context
 
-You can test the function by visiting: <A HREF="https://api.mikeoc.me/service/beta/showEventDetail&quest;key1=value2&amp;key2=value2">https://api.mikeoc.me/service/beta/showEventDetail</A>
+You can test the function by visiting: <A HREF="https://api.mikeoc.me/service/beta/showEventDetail&#63;key1=value2&#38;key2=value2">https://api.mikeoc.me/service/beta/showEventDetail</A>
 
 ## API Gateway Method Execution
 Since program returns CSS/HTML code vs. the typical json, we need to
