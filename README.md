@@ -8,6 +8,8 @@ function execution environment formatted in CSS/HTML
     - Data passed from the browser client via API Gateway
     - A few attributes of the function execution context
 
+You can test the function by visiting: <A HREF='https://api.mikeoc.me/service/beta/showEventDetail?key1=value&key2=value'>https://api.mikeoc.me/service/beta/showEventDetail?</A>
+
 ## API Gateway Method Execution
 Since program returns CSS/HTML code vs. the typical json, we need to
 reconfigure the API Gateway Integration Response associated with the Method Execution. To define a custom response mapping we'll also have to disable Integration Request default Proxy behavior and optionally create a new Request Mapping template. Both
