@@ -1,9 +1,9 @@
 from json import loads
 import platform
+import logging
 from urllib.request import urlopen
 
-''' Lambda function written in Python 3 that returns the following
-    in raw HTML/CSS:
+''' Python 3 Lambda function that returns the following in raw HTML/CSS:
 
     - Location data based on the IP address of the function execution environment
 
@@ -13,7 +13,10 @@ from urllib.request import urlopen
 
     For info on provisioning API gateway, please see README.md @
     https://github.com/mikeoc61/aws-lambda-get-event-detail
-    '''
+'''
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 platform_data = {
     'system': platform.system(),
@@ -49,22 +52,22 @@ def get_IP_geo():
     try:
         webUrl = urlopen (geo_URL)
     except:
-        print("Error opening: {}, using default location".format(geo_URL))
+        logger.error("Error opening: %s, using default location", geo_URL)
     else:
         if (webUrl.getcode() == 200):
             geo_data = webUrl.read()
             geo_json = loads(geo_data.decode('utf-8'))
             geo_json['loc'] = geo_json['loc'].split(',')
         else:
-            print("webUrl.getcode() returned: {}".format(webUrl.getcode()))
-            print("Using default location data")
+            logger.error("webUrl.getcode() returned: %s", webUrl.getcode())
+            logger.error("Using default location data")
 
     return geo_json
 
 def build_response(event, context):
     '''Using event and context data structures provided by the event
-       handler, build a list formatted as CSS/HTML/Javascript consisting
-       of information about the execution environment and return list
+       handler, build a DOM formatted as CSS/HTML/Javascript consisting
+       of information about the execution environment and return DOM
        to the lambda event handler.
     '''
 
@@ -80,7 +83,7 @@ def build_response(event, context):
     html_head += "html {text-align:left;margin:0 auto;background:darkgrey;width:850px}"
 
     html_head += ".detail {position: relative; left: 30px;}"
-    html_head += ".detail {border: 3px solid darkgrey;}"
+    html_head += ".detail {border: 2px solid darkgrey;}"
     html_head += ".detail {border-radius: 5px; padding: 2px;}"
     html_head += ".detail {text-align: left; width: 620px;}"
     html_head += ".detail {margin-left: 10px;}"
@@ -118,6 +121,7 @@ def build_response(event, context):
     html_body += "</button></div>"
 
     html_body += "<section class='container'>"
+
     # Location detail based on IP address of calling function
 
     my_geo = get_IP_geo()
@@ -149,7 +153,7 @@ def build_response(event, context):
     html_body += "<ul>"
     for key, v in event.items():
         html_body += "<h3>{}</h3>".format(key)
-        print("{} = {}".format(key, event[key]))
+        logger.info("Key %s = %s", key, event[key])
         if isinstance(event[key], dict):
             for attr, val in v.items():
                 html_body += "<li>{} = {}</li>".format(attr, v[attr])
@@ -195,6 +199,8 @@ def lambda_handler(event, context):
        function simply calls the response_builder function and
        will returns CSS/HTML via the gataway to the client
     '''
-    print("In lambda handler")
+
+    logger.info('Event: %s', event)
+    logger.info('Context: %s', context)
 
     return build_response(event, context)
