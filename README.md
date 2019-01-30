@@ -52,7 +52,7 @@ Method Execution. Here are the relevant console instructions:
 
 ### For Integration Response
 
-  1.  In API Gateway, select the API you specified when creating the Lamdba function
+  1.  In API Gateway, select the API you specified when creating the Lambda function
   2.  Select the GET Method for your new lambda function and select Method Response
   3.  Expand 200 Response and the click on Add Header under Response Headers for 200
   4.  Enter "Content-Type" in the box and click on the check icon to the right
