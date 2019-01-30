@@ -129,7 +129,7 @@ def build_response(event, context):
     html_body += "<div class='detail'>"
     html_body += "<ul>"
     for k, v in my_geo.items():
-        html_body += "<li>{} = {}</li>".format(k, v)
+        html_body += "<li><strong>{}</strong>: {}</li>".format(k, v)
     html_body += "</ul>"
     html_body += "</div>"
 
@@ -139,7 +139,7 @@ def build_response(event, context):
     html_body += "<div class='detail'>"
     html_body += "<ul>"
     for k, v in platform_data.items():
-        html_body += "<li>{} = {}</li>".format(k, v)
+        html_body += "<li><strong>{}</strong>: {}</li>".format(k, v)
     html_body += "</ul>"
     html_body += "</div>"
 
@@ -151,14 +151,16 @@ def build_response(event, context):
 
     html_body += "<div class='detail'>"
     html_body += "<ul>"
-    for key, v in event.items():
-        html_body += "<h3>{}</h3>".format(key)
-        logger.info("Key %s = %s", key, event[key])
-        if isinstance(event[key], dict):
-            for attr, val in v.items():
-                html_body += "<li>{} = {}</li>".format(attr, v[attr])
-        elif isinstance(event[key], str):
-            html_body += "<li>{} = {}</li>".format(key, event[key])
+    for k, v in event.items():
+        html_body += "<h3>{}</h3>".format(k.upper())
+        logger.info("Key %s = %s", k, v)
+        for k1, v1 in v.items():
+            if isinstance (v1, dict):
+                html_body += "<h4>{}</h4>".format(k1.upper())
+                for k2, v2 in v1.items():
+                    html_body += "<li><strong>{}</strong>: {}</li>".format(k2, v2)
+            else:
+                html_body += "<li><strong>{}</strong>: {}</li>".format(k1, v1)
     html_body += "</ul>"
     html_body += "</div>"
 
