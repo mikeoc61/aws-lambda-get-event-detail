@@ -10,10 +10,10 @@ from urllib.request import urlopen
     - Data passed from the browser client via API Gateway
 
     - Various attributes of the function execution context
-
-    For info on provisioning API gateway, please see README.md @
-    https://github.com/mikeoc61/aws-lambda-get-event-detail
 '''
+
+# For info on provisioning API gateway, please see README.md @
+# https://github.com/mikeoc61/aws-lambda-get-event-detail
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -29,7 +29,7 @@ platform_data = {
     }
 
 def get_IP_geo():
-    '''Get location related data from seb service: http://ipinfo.io/json'''
+    '''Get location related data from web service: http://ipinfo.io/json'''
 
     geo_URL = "http://ipinfo.io/json"
 
@@ -37,13 +37,13 @@ def get_IP_geo():
     # that function will still return data in and expected format if call fails
 
     geo_json = {
-    "ip": "123.123.123.123",
-    "city": "AnyTown",
-    "region": "AnyState",
-    "country": "AnyCountry",
-    "loc": ["99.9999", "-99.9999"],
-    "postal": "90210",
-    "org": "MickeyMouse Technologies Inc."
+        "ip": "123.123.123.123",
+        "city": "AnyTown",
+        "region": "AnyState",
+        "country": "AnyCountry",
+        "loc": ["99.9999", "-99.9999"],
+        "postal": "90210",
+        "org": "MickeyMouse Technologies Inc."
     }
 
     # Open the URL and read the data, if successful decode bytestring and
@@ -71,41 +71,24 @@ def build_response(event, context):
        to the lambda event handler.
     '''
 
-    # Format the Head section of the DOM including any CSS formatting to
-    # apply to the remainder of the document. Break into multiple lines for
-    # improved readability
+    # Link to supporting CSS Stylesheet and Favicon stored on S3
+
+    S3_BASE = '< Location of S3 bucket used to hold CSS and Favicon files >'
+
+    CSS_FILE = S3_BASE + 'styles.css'
+    CSS_LINK = "rel='stylesheet' type='text/css' href='{}'".format(CSS_FILE)
+
+    ICO_FILE = S3_BASE + 'favicon.ico'
+    ICO_LINK = "rel='icon' type='image/x-icon' href='{}'".format(ICO_FILE)
+
+    logger.info("CSS_FILE = %s", CSS_FILE)
+    logger.info("ICO_FILE = %s", ICO_FILE)
 
     html_head = "<!DOCTYPE html>"
-    html_head += "<head lang='en'>"
-    html_head += "<title>Display Lambda Function Detail</title>"
-    html_head += "<style>"
-    html_head += "body {background-color:#e5e5e5;margin:50px;padding: 10px;width:730px;}"
-    html_head += "html {text-align:left;margin:0 auto;background:darkgrey;width:850px}"
-
-    html_head += ".detail {position: relative; left: 30px;}"
-    html_head += ".detail {border: 2px solid darkgrey;}"
-    html_head += ".detail {border-radius: 5px; padding: 2px;}"
-    html_head += ".detail {text-align: left; width: 620px;}"
-    html_head += ".detail {margin-left: 10px;}"
-
-    html_head += ".button {color: white; background: darkgrey;}"
-    html_head += ".button {text-align: center; padding: 5px 20px;}"
-    html_head += ".button {border-radius: 4px; cursor: pointer;}"
-    html_head += ".button {margin: 4px 2px; font-size: 18px;}"
-    html_head += ".button {border: 2px solid black;}"
-    html_head += ".button {display: inline-block; text-decoration: none;}"
-
-    html_head += ".container {text-align:center;outline:solid 2px;}"
-    html_head += ".container {margin: 20px; padding-bottom: 10px;}"
-
-    html_head += "ul {list-style-position: inside; word-break: break-all;}"
-    html_head += "ul {padding-left: 20px; margin-left: 20px; text-indent: -20px}"
-    html_head += "ul {font-family: 'Times New Roman', Times, serif;}"
-    html_head += "ul {font-size: 14px;}"
-    html_head += "h1 {text-align: center; margin-top: 20px}"
-    html_head += "h2 {text-align: left; margin-left: 10px;padding-top: 20px}"
-    html_head += "h3 {test-align: left; margin-left: -10px;}"
-    html_head += "</style>"
+    html_head +=  "<head lang='en'>"
+    html_head +=  "<title>Display Lambda Function Detail</title>"
+    html_head +=  "<link " + CSS_LINK + ">"
+    html_head +=  "<link " + ICO_LINK + ">"
     html_head += "</head>"
 
     # This is the main part of the routine and forms the HTML Body section and
@@ -116,8 +99,8 @@ def build_response(event, context):
     html_body += "<h1>AWS Lambda Function Event Details</h1>"
 
     html_body += "<div align = center>"
-    html_body += "<button class='button' onclick='location.reload();'>"
-    html_body += "Refresh Page"
+    html_body +=  "<button class='button' onclick='location.reload();'>"
+    html_body +=   "Refresh Page"
     html_body += "</button></div>"
 
     html_body += "<section class='container'>"
