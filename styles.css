@@ -1,70 +1,71 @@
 body {
-      background-color: #e5e5e5;
-      margin: 50px;
-      padding: 10px;
-      width: 730px;
-  }
+  background-color: lightslategray;
+  border: 2px solid black;
+  margin: 50px;
+  padding: 10px;
+  width: 730px;
+}
 
 html {
-    text-align: left;
-    margin: 0 auto;
-    background: darkgrey;
-    width: 850px;
-    }
+  background: steelblue;
+  text-align: left;
+  margin: 0 auto;
+  width: 850px;
+}
 
 .detail {
-    position: relative;
-    left: 30px;
-    border: 2px solid darkgrey;
-    border-radius: 5px;
-    padding: 2px;
-    text-align: left;
-    margin-left: 10px;
-    width: 620px;
+  position: relative;
+  left: 30px;
+  border: 2px solid lightslategray;
+  background-color: lightsteelblue;
+  border-radius: 5px;
+  text-align: left;
+  width: 620px;
 }
 
 .button {
-    color: white;
-    background: darkgrey;
-    text-align: center;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 4px 2px;
-    font-size: 18px;
-    border: 2px solid black;
-    display: inline-block;
-    text-decoration: none;
-    }
+  color: white;
+  background: steelblue;
+  text-align: center;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 4px 2px;
+  font-size: 18px;
+  border: 2px solid black;
+  display: inline-block;
+  text-decoration: none;
+}
 
 .container {
-    text-align: center;
-    outline: solid 2px;
-    margin: 20px;
-    padding-bottom: 10px;
+  background-color: : white;
+  text-align: center;
+  outline: solid 2px;
+  margin: 20px;
+  padding-bottom: 10px;
 }
 
 ul {
-    list-style-position: inside;
-    word-break: break-all;
-    padding-left: 20px;
-    margin-left: 20px;
-    text-indent: -20px;
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 14px;
-    }
+  list-style-position: inside;
+  word-break: break-word;
+  padding-left: 20px;
+  margin-left: 20px;
+  text-indent: -20px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 14px;
+}
 
 h1 {
-    text-align: center;
-    margin-top: 20px;
+  text-align: center;
+  margin-top: 20px;
 }
 
 h2 {
-    text-align: left;
-    margin-left: 10px;
-    padding-top: 20px;
+  text-align: left;
+  margin-left: 10px;
+  padding-top: 20px;
 }
 
 h3 {
-    text-align: left;
-    margin-left: -10px;
+  text-align: left;
+  margin-left: -10px;
 }
