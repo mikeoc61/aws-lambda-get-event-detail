@@ -1,45 +1,46 @@
-body {
-  background-color: lightslategray;
-  border: 2px solid black;
-  margin: 50px;
-  padding: 10px;
-  width: 730px;
-}
-
 html {
-  background: steelblue;
+  background: #287D76;   /* Mytrle Green */
   text-align: left;
   margin: 0 auto;
   width: 850px;
 }
 
+body {
+  color: lightgray;
+  background-color: #0B4B6D;  /* Dark Imperial Blue */
+  border: 2px solid black;
+  border-radius: 8px;
+  margin: 50px;
+  padding: 10px;
+  width: 700px;
+}
+
 .detail {
   position: relative;
   left: 30px;
-  border: 2px solid lightslategray;
-  background-color: lightsteelblue;
+  color: black;
+  background-color: #F2DC5D;  /* STIL DE GRAIN YELLOW */
   border-radius: 5px;
   text-align: left;
   width: 620px;
+  padding: 1px;
 }
 
 .button {
   color: white;
-  background: steelblue;
+  background-color: #287D76;   /* Mytrle Green */
   text-align: center;
   border-radius: 4px;
   cursor: pointer;
   margin: 4px 2px;
   font-size: 18px;
-  border: 2px solid black;
   display: inline-block;
-  text-decoration: none;
 }
 
 .container {
-  background-color: : white;
   text-align: center;
   outline: solid 2px;
+  outline-color: #287D76;   /* Mytrle Green */
   margin: 20px;
   padding-bottom: 10px;
 }
