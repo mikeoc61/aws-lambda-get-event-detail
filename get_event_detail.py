@@ -73,7 +73,7 @@ def build_response(event, context):
 
     # Link to supporting CSS Stylesheet and Favicon stored on S3
 
-    S3_BASE = '< Location of S3 bucket used to hold CSS and Favicon files >'
+    S3_BASE = 'https://www.mikeoc.me/projects/lambda_event_detail/'
 
     CSS_FILE = S3_BASE + 'styles.css'
     CSS_LINK = "rel='stylesheet' type='text/css' href='{}'".format(CSS_FILE)
@@ -91,9 +91,10 @@ def build_response(event, context):
     html_head +=  "<link " + ICO_LINK + ">"
     html_head += "</head>"
 
-    # This is the main part of the routine and forms the HTML Body section and
-    # needs to be constructed of pure HTML as we will be returning only HTML to
-    # a browser client
+    # This is the main part of the routine and forms the HTML Body
+    # section of the DOM we will build and return to client.
+
+    VAL_COL = "<span style='color:#3ad900;'>"   # Limegreen text
 
     html_body = "<body>"
     html_body += "<h1>AWS Lambda Function Event Details</h1>"
@@ -108,11 +109,11 @@ def build_response(event, context):
     # Location detail based on IP address of calling function
 
     my_geo = get_IP_geo()
-    html_body += "<h2>Location Detail based on IP lookup</h2>"
+    html_body += "<h2>Container location based on IP lookup</h2>"
     html_body += "<div class='detail'>"
     html_body += "<ul>"
     for k, v in my_geo.items():
-        html_body += "<li><strong>{}</strong>: {}</li>".format(k, v)
+        html_body += "<li>" + k.capitalize() + ": " + VAL_COL + str(v) + "</li>"
     html_body += "</ul>"
     html_body += "</div>"
 
@@ -122,7 +123,7 @@ def build_response(event, context):
     html_body += "<div class='detail'>"
     html_body += "<ul>"
     for k, v in platform_data.items():
-        html_body += "<li><strong>{}</strong>: {}</li>".format(k, v)
+        html_body += "<li>" + k.capitalize() + ": " + VAL_COL + str(v) + "</li>"
     html_body += "</ul>"
     html_body += "</div>"
 
@@ -141,9 +142,9 @@ def build_response(event, context):
             if isinstance (v1, dict):
                 html_body += "<h4>{}</h4>".format(k1.upper())
                 for k2, v2 in v1.items():
-                    html_body += "<li><strong>{}</strong>: {}</li>".format(k2, v2)
+                    html_body += "<li>" + k2.capitalize() + ": " + VAL_COL + str(v2) + "</li>"
             else:
-                html_body += "<li><strong>{}</strong>: {}</li>".format(k1, v1)
+                html_body += "<li>" + k1.capitalize() + ": " + VAL_COL + str(v1) + "</li>"
     html_body += "</ul>"
     html_body += "</div>"
 
@@ -153,16 +154,16 @@ def build_response(event, context):
     html_body += "<h2>Event Context Detail</h2>"
     html_body += "<div class='detail'>"
     html_body += "<ul>"
-    html_body += "<li>Function name: {}</li>".format(context.function_name)
-    html_body += "<li>Function version: {}</li>".format(context.function_version)
-    html_body += "<li>Function ARN: {}</li>".format(context.invoked_function_arn)
-    html_body += "<li>Request ID: {}</li>".format(context.aws_request_id)
+    html_body += "<li>Function name: " + VAL_COL +  "{}</li>".format(context.function_name)
+    html_body += "<li>Function version: " + VAL_COL + "{}</li>".format(context.function_version)
+    html_body += "<li>Function ARN: " + VAL_COL +  "{}</li>".format(context.invoked_function_arn)
+    html_body += "<li>Request ID: " + VAL_COL + "{}</li>".format(context.aws_request_id)
     html_body += "<br>"
-    html_body += "<li>Time used (MS): {}</li>".format(
+    html_body += "<li>Time used (MS): " + VAL_COL + "{}</li>".format(
                   3000 - context.get_remaining_time_in_millis())
-    html_body += "<li>Time budget remaining (MS): {}</li>".format(
+    html_body += "<li>Time budget remaining (MS): " + VAL_COL +  "{}</li>".format(
                   context.get_remaining_time_in_millis())
-    html_body += "<li>Memory limits (MB): {}</li>".format(
+    html_body += "<li>Memory limits (MB): " + VAL_COL +  "{}</li>".format(
                   context.memory_limit_in_mb)
     html_body += "</ul>"
     html_body += "</div>"
@@ -178,6 +179,7 @@ def build_response(event, context):
     resp = html_head + html_body + html_tail
 
     return resp
+
 
 def lambda_handler(event, context):
     '''Main event handler function invoked by API gateway. In this case,

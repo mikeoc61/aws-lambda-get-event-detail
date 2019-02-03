@@ -1,14 +1,14 @@
 html {
-  background: #287D76;   /* Mytrle Green */
+  background: #f4f6f7;  /* Cloud 9 Whitesmoke */
   text-align: left;
   margin: 0 auto;
   width: 850px;
 }
 
 body {
-  color: lightgray;
-  background-color: #0B4B6D;  /* Dark Imperial Blue */
-  border: 2px solid black;
+  color: black;
+  background-color: lightgray;
+  border: 1px solid #e9920d;  /* Dark Orange from Cloud 9 */
   border-radius: 8px;
   margin: 50px;
   padding: 10px;
@@ -18,8 +18,8 @@ body {
 .detail {
   position: relative;
   left: 30px;
-  color: black;
-  background-color: #F2DC5D;  /* STIL DE GRAIN YELLOW */
+  color: #0088ff; /* Doger Blue from Cloud 9 */
+  background-color: #002140;  /* Cloud 9 Midnight Blue */
   border-radius: 5px;
   text-align: left;
   width: 600px;
@@ -27,20 +27,20 @@ body {
 }
 
 .button {
-  color: white;
-  background-color: #287D76;   /* Mytrle Green */
+  color: #e9920d;  /* Dark Orange from Cloud 9 */
+  background-color: #002140;  /* Cloud 9 Midnight Blue */
   text-align: center;
   border-radius: 4px;
   cursor: pointer;
   margin: 4px 2px;
-  font-size: 18px;
+  font-size: 1em;
   display: inline-block;
 }
 
 .container {
   text-align: center;
-  outline: solid 2px;
-  outline-color: #287D76;   /* Mytrle Green */
+  outline: solid 1px;
+  outline-color: #002140;  /* Cloud 9 Midnight Blue */
   margin: 20px;
   padding-bottom: 10px;
 }
@@ -51,8 +51,8 @@ ul {
   padding-left: 20px;
   margin-left: 20px;
   text-indent: -20px;
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 14px;
+  font-family: Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace;
+  font-size: .7em;
 }
 
 h1 {
