@@ -1,8 +1,13 @@
-# aws-lambda-get-event-detail
-Python3 program and lambda event handler that returns various details about the
-function execution environment formatted in CSS/HTML
+# Display AWS Lambda Details
+
+![Screenshot image](./Event_Detail.png)
+
+Lambda event handler written in Python that returns various details about the
+function execution environment formatted as HTML DOM for display in a web
+browser.
 
 ## Function returns the following:
+
     - Location data based on the IP address of the execution environment
     - Platform Execution information
     - Data passed from the browser client via API Gateway
@@ -11,6 +16,7 @@ function execution environment formatted in CSS/HTML
 You can test the function by visiting: https://api.mikeoc.me/service/beta/showEventDetail?key1=value1&key2=value2&key3=value3
 
 ## API Gateway Method Execution
+
 Since program returns CSS/HTML code vs. the typical json, we need to
 reconfigure the API Gateway Integration Response associated with the Method Execution. To define a custom response mapping we'll also have to disable Integration Request default Proxy behavior and optionally create a new Request Mapping template. Both
 the provided mapping template and the one listed below work with this code.
@@ -18,6 +24,7 @@ Also remember to Deploy the API following any changes to
 Method Execution. Here are the relevant console instructions:
 
 ### For Integration Request
+
 1. In API Gateway, select the API you specified when creating the lamdba function
 2. Select the GET Method for your new lambda function and select Integration Request
 3. To add a custom integration template, uncheck the box next to
@@ -26,49 +33,49 @@ Method Execution. Here are the relevant console instructions:
 5. Add mapping template. Here is a sample template that I've found useful:
 
 ```
-##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
+## See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
 ##  This template will pass through all parameters including path, querystring, header, stage variables, and context through to the integration endpoint via the body/payload
-#set($allParams = $input.params())
-{
-"body-json" : $input.json('$'),
-"params" : {
-#foreach($type in $allParams.keySet())
-    #set($params = $allParams.get($type))
-"$type" : {
-    #foreach($paramName in $params.keySet())
-    "$paramName" : "$util.escapeJavaScript($params.get($paramName))"
-        #if($foreach.hasNext),#end
-    #end
-}
-    #if($foreach.hasNext),#end
-#end
-},
-"stage-variables" : {
-#foreach($key in $stageVariables.keySet())
-"$key" : "$util.escapeJavaScript($stageVariables.get($key))"
-    #if($foreach.hasNext),#end
-#end
-},
-"context" : {
-    "account-id" : "$context.identity.accountId",
-    "api-id" : "$context.apiId",
-    "api-key" : "$context.identity.apiKey",
-    "authorizer-principal-id" : "$context.authorizer.principalId",
-    "caller" : "$context.identity.caller",
-    "cognito-authentication-provider" : "$context.identity.cognitoAuthenticationProvider",
-    "cognito-authentication-type" : "$context.identity.cognitoAuthenticationType",
-    "cognito-identity-id" : "$context.identity.cognitoIdentityId",
-    "cognito-identity-pool-id" : "$context.identity.cognitoIdentityPoolId",
-    "http-method" : "$context.httpMethod",
-    "stage" : "$context.stage",
-    "source-ip" : "$context.identity.sourceIp",
-    "user" : "$context.identity.user",
-    "user-agent" : "$context.identity.userAgent",
-    "user-arn" : "$context.identity.userArn",
-    "request-id" : "$context.requestId",
-    "resource-id" : "$context.resourceId",
-    "resource-path" : "$context.resourcePath"
-    }
+
+#set($allParams = $input.params()) {
+  "body-json" : $input.json('$'),
+  "params" : {
+      #foreach($type in $allParams.keySet())
+      #set($params = $allParams.get($type))
+      "$type" : {
+        #foreach($paramName in $params.keySet())
+        "$paramName" : "$util.escapeJavaScript($params.get($paramName))"
+            #if($foreach.hasNext),#end
+        #end
+      }
+      #if($foreach.hasNext),#end
+  #end
+  },
+  "stage-variables" : {
+     #foreach($key in $stageVariables.keySet())
+     "$key" : "$util.escapeJavaScript($stageVariables.get($key))"
+      #if($foreach.hasNext),#end
+      #end
+      },
+  "context" : {
+      "account-id" : "$context.identity.accountId",
+      "api-id" : "$context.apiId",
+      "api-key" : "$context.identity.apiKey",
+      "authorizer-principal-id" : "$context.authorizer.principalId",
+      "caller" : "$context.identity.caller",
+      "cognito-authentication-provider" : "$context.identity.cognitoAuthenticationProvider",
+      "cognito-authentication-type" : "$context.identity.cognitoAuthenticationType",
+      "cognito-identity-id" : "$context.identity.cognitoIdentityId",
+      "cognito-identity-pool-id" : "$context.identity.cognitoIdentityPoolId",
+      "http-method" : "$context.httpMethod",
+      "stage" : "$context.stage",
+      "source-ip" : "$context.identity.sourceIp",
+      "user" : "$context.identity.user",
+      "user-agent" : "$context.identity.userAgent",
+      "user-arn" : "$context.identity.userArn",
+      "request-id" : "$context.requestId",
+      "resource-id" : "$context.resourceId",
+      "resource-path" : "$context.resourcePath"
+      }
 }
 ```
 
