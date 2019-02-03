@@ -7,21 +7,18 @@ function execution environment formatted as HTML DOM for display in a web
 browser.
 
 ## Function returns the following:
-
     - Location data based on the IP address of the execution environment
     - Platform Execution information
     - Data passed from the browser client via API Gateway
     - A few attributes of the function execution context
 
-You can test the function by visiting: https://api.mikeoc.me/service/beta/showEventDetail?key1=value1&key2=value2&key3=value3
+Check it out @: https://api.mikeoc.me/service/beta/showEventDetail?key1=value1&key2=value2&key3=value3
 
 ## API Gateway Method Execution
 
 Since program returns CSS/HTML code vs. the typical json, we need to
-reconfigure the API Gateway Integration Response associated with the Method Execution. To define a custom response mapping we'll also have to disable Integration Request default Proxy behavior and optionally create a new Request Mapping template. Both
-the provided mapping template and the one listed below work with this code.
-Also remember to Deploy the API following any changes to
-Method Execution. Here are the relevant console instructions:
+reconfigure the API Gateway Integration Response associated with the Method Execution. To define a custom response mapping we'll also have to disable Integration Request default Proxy behavior and create a new Request Mapping template. The template controls the structure of the data received by the
+event handler so the two are interdependent. Remember to deploy you modified API Gateway following any changes to Method Execution. Here are the relevant console instructions:
 
 ### For Integration Request
 
