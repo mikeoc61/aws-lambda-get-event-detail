@@ -1,6 +1,7 @@
 from json import loads
 import platform
 import logging
+import subprocess
 from urllib.request import urlopen
 
 ''' Python 3 Lambda function that returns the following in raw HTML/CSS:
@@ -27,6 +28,16 @@ platform_data = {
     'processor': platform.processor(),
     'python': platform.python_version()
     }
+
+
+# OS Commands to execute. Key will be displayed and Value will be executed.
+# Note command to be executed must be provided as an array of strings
+
+os_commands = {
+    'ps -ef': ['ps', '-ef'],
+    'ls -lA': ['ls', '-lA'],
+    'uptime': ['uptime']
+}
 
 def get_IP_geo():
     '''Get location related data from web service: http://ipinfo.io/json'''
@@ -124,6 +135,21 @@ def build_response(event, context):
     html_body += "<ul>"
     for k, v in platform_data.items():
         html_body += "<li>" + k.capitalize() + ": " + VAL_COL + str(v) + "</li>"
+    html_body += "</ul>"
+    html_body += "</div>"
+
+    # OS Command Execution output
+
+    html_body += "<h2>OS Command Execution Output</h2>"
+    html_body += "<div class='detail'>"
+    html_body += "<ul>"
+
+    # For each OS command in data structure, execute and display output
+    for k, v in os_commands.items():
+        p = subprocess.Popen(v, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        for line in p.stdout.readlines():
+            html_body += "<li>" + k + ": " + VAL_COL + line.decode('utf-8').strip(' ') + "</li>"
+
     html_body += "</ul>"
     html_body += "</div>"
 
