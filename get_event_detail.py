@@ -1,4 +1,5 @@
 from json import loads
+import os
 import platform
 import logging
 import subprocess
@@ -20,13 +21,16 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 platform_data = {
-    'system': platform.system(),
-    'platform': platform.platform(),
-    'nodename': platform.node(),
-    'machine': platform.machine(),
-    'architecture': platform.architecture(),
-    'processor': platform.processor(),
-    'python': platform.python_version()
+    'System': platform.system(),
+    'Platform': platform.platform(),
+    'Nodename': platform.node(),
+    'Machine': platform.machine(),
+    'Architecture': platform.architecture(),
+    'Processor': platform.processor(),
+    'Python': platform.python_version(),
+    'PATH': os.environ['PATH'],
+    'LANG': os.environ['LANG'],
+    'Timezone': os.environ['TZ']
     }
 
 
@@ -34,9 +38,10 @@ platform_data = {
 # Note command to be executed must be provided as an array of strings
 
 os_commands = {
-    'ps -ef': ['ps', '-ef'],
-    'ls -lA': ['ls', '-lA'],
-    'uptime': ['uptime']
+    'Processes': ['ps', '-ef'],
+    'Release': ['cat', '/etc/os-release'],
+    'Uptime': ['uptime'],
+    'Files': ['ls', '-lAh']
 }
 
 def get_IP_geo():
@@ -44,8 +49,8 @@ def get_IP_geo():
 
     geo_URL = "http://ipinfo.io/json"
 
-    # Initialize data structure we will use to build and return to caller so
-    # that function will still return data in and expected format if call fails
+    #### Initialize data structure we will use to build and return to caller so
+    #### that function will still return data in and expected format if call fails
 
     geo_json = {
         "ip": "123.123.123.123",
@@ -57,8 +62,8 @@ def get_IP_geo():
         "org": "MickeyMouse Technologies Inc."
     }
 
-    # Open the URL and read the data, if successful decode bytestring and
-    # split lat and long into separate strings for easier handling
+    #### Open the URL and read the data, if successful decode bytestring and
+    #### split lat and long into separate strings for easier handling
 
     try:
         webUrl = urlopen (geo_URL)
@@ -82,7 +87,7 @@ def build_response(event, context):
        to the lambda event handler.
     '''
 
-    # Link to supporting CSS Stylesheet and Favicon stored on S3
+    #### Link to supporting CSS Stylesheet and Favicon stored on S3
 
     S3_BASE = 'https://www.mikeoc.me/projects/lambda_event_detail/'
 
@@ -102,8 +107,8 @@ def build_response(event, context):
     html_head +=  "<link " + ICO_LINK + ">"
     html_head += "</head>"
 
-    # This is the main part of the routine and forms the HTML Body
-    # section of the DOM we will build and return to client.
+    #### This is the main part of the routine and forms the HTML Body
+    #### section of the DOM we will build and return to client.
 
     VAL_COL = "<span style='color:#3ad900;'>"   # Limegreen text
 
@@ -117,7 +122,7 @@ def build_response(event, context):
 
     html_body += "<section class='container'>"
 
-    # Location detail based on IP address of calling function
+    #### Location detail based on IP address of calling function
 
     my_geo = get_IP_geo()
     html_body += "<h2>Container location based on IP lookup</h2>"
@@ -128,39 +133,44 @@ def build_response(event, context):
     html_body += "</ul>"
     html_body += "</div>"
 
-    # Platform Execution Environment details
+    #### Platform Execution Environment detail
 
     html_body += "<h2>Platform Execution Detail</h2>"
     html_body += "<div class='detail'>"
     html_body += "<ul>"
+
     for k, v in platform_data.items():
         html_body += "<li>" + k.capitalize() + ": " + VAL_COL + str(v) + "</li>"
+
     html_body += "</ul>"
     html_body += "</div>"
 
-    # OS Command Execution output
+    #### OS Command Execution output
 
     html_body += "<h2>OS Command Execution Output</h2>"
     html_body += "<div class='detail'>"
     html_body += "<ul>"
 
     # For each OS command in data structure, execute and display output
-    for k, v in os_commands.items():
-        p = subprocess.Popen(v, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for key, cmd in os_commands.items():
+        i = 1
+        p = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         for line in p.stdout.readlines():
-            html_body += "<li>" + k + ": " + VAL_COL + line.decode('utf-8').strip(' ') + "</li>"
+            html_body += "<li>" + key + "[" + str(i) + "]: " + VAL_COL + line.decode('utf-8') + "</li>"
+            i += 1
 
     html_body += "</ul>"
     html_body += "</div>"
 
-    # Event detail based on format defined by API gateway Integration Request
-    # mapping template for method invoked. Loop through data structures in
-    # the event{} object and convert to HTML list items.
+    #### Event detail based on format defined by API gateway Integration Request
+    #### mapping template for method invoked. Loop through data structures in
+    #### the event{} object and convert to HTML list items.
 
     html_body += "<h2>Client Request Detail</h2>"
 
     html_body += "<div class='detail'>"
     html_body += "<ul>"
+
     for k, v in event.items():
         html_body += "<h3>{}</h3>".format(k.upper())
         logger.info("Key %s = %s", k, v)
@@ -171,11 +181,12 @@ def build_response(event, context):
                     html_body += "<li>" + k2.capitalize() + ": " + VAL_COL + str(v2) + "</li>"
             else:
                 html_body += "<li>" + k1.capitalize() + ": " + VAL_COL + str(v1) + "</li>"
+
     html_body += "</ul>"
     html_body += "</div>"
 
-    # Display some context attributes for this lambda function. See:
-    # https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
+    #### Display some context attributes for this lambda function. See:
+    #### https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
 
     html_body += "<h2>Event Context Detail</h2>"
     html_body += "<div class='detail'>"
@@ -194,13 +205,13 @@ def build_response(event, context):
     html_body += "</ul>"
     html_body += "</div>"
 
-    # Finished with HTML formatting
+    #### Finished with HTML formatting
 
     html_body += "</section>"
     html_body += "</body>"
     html_tail = "</html>"
 
-    # Assemble HTML response and return via API Gateway
+    #### Assemble HTML response and return via API Gateway
 
     resp = html_head + html_body + html_tail
 
