@@ -2,11 +2,11 @@ from json import loads
 import os
 import platform
 import logging
-import subprocess
+from subprocess import Popen, PIPE, STDOUT
 from urllib.request import urlopen
 
 ''' Python 3 Lambda function that returns the following in raw HTML/CSS:
-
+    
     - Location data based on the IP address of the function execution environment
 
     - Data passed from the browser client via API Gateway
@@ -125,7 +125,7 @@ def build_response(event, context):
     #### Location detail based on IP address of calling function
 
     my_geo = get_IP_geo()
-    html_body += "<h2>Container location based on IP lookup</h2>"
+    html_body += "<h2>Function execution location based on IP lookup</h2>"
     html_body += "<div class='detail'>"
     html_body += "<ul>"
     for k, v in my_geo.items():
@@ -154,10 +154,16 @@ def build_response(event, context):
     # For each OS command in data structure, execute and display output
     for key, cmd in os_commands.items():
         i = 1
-        p = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        for line in p.stdout.readlines():
-            html_body += "<li>" + key + "[" + str(i) + "]: " + VAL_COL + line.decode('utf-8') + "</li>"
-            i += 1
+        try:
+            p = Popen(cmd, shell=False, stdout=PIPE, stderr=STDOUT)
+        except:
+            html_body += "<li>" + key + "[" + str(i) + "]: " \
+                      + VAL_COL + ' '.join(cmd) + ': command not found'"</li>"
+        else:
+            for line in p.stdout.readlines():
+                html_body += "<li>" + key + "[" + str(i) + "]: " \
+                          + VAL_COL + line.decode('utf-8') + "</li>"
+                i += 1
 
     html_body += "</ul>"
     html_body += "</div>"
@@ -178,9 +184,11 @@ def build_response(event, context):
             if isinstance (v1, dict):
                 html_body += "<h4>{}</h4>".format(k1.upper())
                 for k2, v2 in v1.items():
-                    html_body += "<li>" + k2.capitalize() + ": " + VAL_COL + str(v2) + "</li>"
+                    html_body += "<li>" + k2.capitalize() + ": " \
+                              + VAL_COL + str(v2) + "</li>"
             else:
-                html_body += "<li>" + k1.capitalize() + ": " + VAL_COL + str(v1) + "</li>"
+                html_body += "<li>" + k1.capitalize() + ": " \
+                          + VAL_COL + str(v1) + "</li>"
 
     html_body += "</ul>"
     html_body += "</div>"
