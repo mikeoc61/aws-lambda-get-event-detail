@@ -6,7 +6,7 @@ from subprocess import Popen, PIPE, STDOUT
 from urllib.request import urlopen
 
 ''' Python 3 Lambda function that returns the following in raw HTML/CSS:
-    
+
     - Location data based on the IP address of the function execution environment
 
     - Data passed from the browser client via API Gateway
@@ -35,7 +35,7 @@ platform_data = {
 
 
 # OS Commands to execute. Key will be displayed and Value will be executed.
-# Note command to be executed must be provided as an array of strings
+# Note command to be executed must be provided as an array (list) of strings
 
 os_commands = {
     'Processes': ['ps', '-ef'],
@@ -63,17 +63,15 @@ def get_IP_geo():
     }
 
     #### Open the URL and read the data, if successful decode bytestring and
-    #### split lat and long into separate strings for easier handling
 
     try:
-        webUrl = urlopen (geo_URL)
+        webUrl = urlopen(geo_URL)
     except:
         logger.error("Error opening: %s, using default location", geo_URL)
     else:
         if (webUrl.getcode() == 200):
             geo_data = webUrl.read()
             geo_json = loads(geo_data.decode('utf-8'))
-            geo_json['loc'] = geo_json['loc'].split(',')
         else:
             logger.error("webUrl.getcode() returned: %s", webUrl.getcode())
             logger.error("Using default location data")
@@ -157,6 +155,7 @@ def build_response(event, context):
         try:
             p = Popen(cmd, shell=False, stdout=PIPE, stderr=STDOUT)
         except:
+            logger.error("Error executing: %s", ' '.join(cmd))
             html_body += "<li>" + key + "[" + str(i) + "]: " \
                       + VAL_COL + ' '.join(cmd) + ': command not found'"</li>"
         else:
