@@ -1,7 +1,7 @@
-from json import loads
 import os
 import platform
 import logging
+from json import loads
 from subprocess import Popen, PIPE, STDOUT
 from urllib.request import urlopen
 
@@ -44,10 +44,11 @@ os_commands = {
     'Files': ['ls', '-lAh']
 }
 
-def get_IP_geo():
-    '''Get location related data from web service: http://ipinfo.io/json'''
 
-    geo_URL = "http://ipinfo.io/json"
+def get_IP_geo():
+    '''Get location related data from web service: http://ipinfo.io'''
+
+    geo_URL = "http://ipinfo.io/geo"
 
     #### Initialize data structure we will use to build and return to caller so
     #### that function will still return data in and expected format if call fails
@@ -57,9 +58,8 @@ def get_IP_geo():
         "city": "AnyTown",
         "region": "AnyState",
         "country": "AnyCountry",
-        "loc": ["99.9999", "-99.9999"],
-        "postal": "90210",
-        "org": "MickeyMouse Technologies Inc."
+        "loc": "99.9999, -99.9999",
+        "postal": "90210"
     }
 
     #### Open the URL and read the data, if successful decode bytestring and
@@ -77,6 +77,7 @@ def get_IP_geo():
             logger.error("Using default location data")
 
     return geo_json
+
 
 def build_response(event, context):
     '''Using event and context data structures provided by the event
@@ -150,6 +151,7 @@ def build_response(event, context):
     html_body += "<ul>"
 
     # For each OS command in data structure, execute and display output
+
     for key, cmd in os_commands.items():
         i = 1
         try:
